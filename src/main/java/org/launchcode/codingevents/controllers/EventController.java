@@ -25,11 +25,33 @@ public class EventController {
     private EventCategoryRepository eventCategoryRepository;
 
     @GetMapping
-    public String displayAllEvents(Model model) {
-        model.addAttribute("title", "All Events");
-        model.addAttribute("events", eventRepository.findAll());
-        return "events/index";
-    }
+    public String displayAllEvents(@RequestParam (required = false) Integer categoryId,Model model) {
+        System.out.println("inside get mapping");
+        System.out.println(categoryId);
+
+        if (categoryId == null) {
+            System.out.println("inside all events");
+            model.addAttribute("title", "All Events");
+            model.addAttribute("events", eventRepository.findAll());
+        } else {
+            Optional<EventCategory> result = eventCategoryRepository.findById(categoryId);
+            System.out.println(categoryId);
+            if (result.isEmpty()) {
+                model.addAttribute("title", "Invalid Category Id : " + categoryId);
+                System.out.println("in empty events");
+            } else {
+                System.out.println("in events with category id " + categoryId);
+
+                EventCategory category = result.get();
+                model.addAttribute("title", "Events in category " + category.getName());
+                model.addAttribute("events", category.getEvents());
+
+            }
+        }
+
+            return "events/index";
+        }
+
 
     @GetMapping("create")
     public String displayCreateEventForm(Model model) {
