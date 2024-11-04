@@ -26,22 +26,18 @@ public class EventController {
 
     @GetMapping
     public String displayAllEvents(@RequestParam (required = false) Integer categoryId,Model model) {
-        System.out.println("inside get mapping");
-        System.out.println(categoryId);
 
         if (categoryId == null) {
-            System.out.println("inside all events");
+
             model.addAttribute("title", "All Events");
             model.addAttribute("events", eventRepository.findAll());
         } else {
             Optional<EventCategory> result = eventCategoryRepository.findById(categoryId);
-            System.out.println(categoryId);
+
             if (result.isEmpty()) {
                 model.addAttribute("title", "Invalid Category Id : " + categoryId);
-                System.out.println("in empty events");
-            } else {
-                System.out.println("in events with category id " + categoryId);
 
+            } else {
                 EventCategory category = result.get();
                 model.addAttribute("title", "Events in category " + category.getName());
                 model.addAttribute("events", category.getEvents());
